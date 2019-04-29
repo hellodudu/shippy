@@ -26,16 +26,14 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// 货轮承运的一批货物
 type Consignment struct {
-	Id                   string       `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Description          string       `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Weight               int32        `protobuf:"varint,3,opt,name=weight,proto3" json:"weight,omitempty"`
-	Containers           []*Container `protobuf:"bytes,4,rep,name=containers,proto3" json:"containers,omitempty"`
-	VesselId             string       `protobuf:"bytes,5,opt,name=vessel_id,json=vesselId,proto3" json:"vessel_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Description          string   `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Weight               int32    `protobuf:"varint,3,opt,name=weight,proto3" json:"weight,omitempty"`
+	VesselId             string   `protobuf:"bytes,4,opt,name=vessel_id,json=vesselId,proto3" json:"vessel_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Consignment) Reset()         { *m = Consignment{} }
@@ -84,13 +82,6 @@ func (m *Consignment) GetWeight() int32 {
 	return 0
 }
 
-func (m *Consignment) GetContainers() []*Container {
-	if m != nil {
-		return m.Containers
-	}
-	return nil
-}
-
 func (m *Consignment) GetVesselId() string {
 	if m != nil {
 		return m.VesselId
@@ -98,122 +89,49 @@ func (m *Consignment) GetVesselId() string {
 	return ""
 }
 
-// 单个集装箱
-type Container struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CustomerId           string   `protobuf:"bytes,2,opt,name=customer_id,json=customerId,proto3" json:"customer_id,omitempty"`
-	Origin               string   `protobuf:"bytes,3,opt,name=origin,proto3" json:"origin,omitempty"`
-	UserId               string   `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+type CreateConsignmentResponse struct {
+	Created              bool         `protobuf:"varint,1,opt,name=created,proto3" json:"created,omitempty"`
+	Consignment          *Consignment `protobuf:"bytes,2,opt,name=consignment,proto3" json:"consignment,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
-func (m *Container) Reset()         { *m = Container{} }
-func (m *Container) String() string { return proto.CompactTextString(m) }
-func (*Container) ProtoMessage()    {}
-func (*Container) Descriptor() ([]byte, []int) {
+func (m *CreateConsignmentResponse) Reset()         { *m = CreateConsignmentResponse{} }
+func (m *CreateConsignmentResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateConsignmentResponse) ProtoMessage()    {}
+func (*CreateConsignmentResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_3804bf87090b51a9, []int{1}
 }
 
-func (m *Container) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Container.Unmarshal(m, b)
+func (m *CreateConsignmentResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateConsignmentResponse.Unmarshal(m, b)
 }
-func (m *Container) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Container.Marshal(b, m, deterministic)
+func (m *CreateConsignmentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateConsignmentResponse.Marshal(b, m, deterministic)
 }
-func (m *Container) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Container.Merge(m, src)
+func (m *CreateConsignmentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateConsignmentResponse.Merge(m, src)
 }
-func (m *Container) XXX_Size() int {
-	return xxx_messageInfo_Container.Size(m)
+func (m *CreateConsignmentResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateConsignmentResponse.Size(m)
 }
-func (m *Container) XXX_DiscardUnknown() {
-	xxx_messageInfo_Container.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Container proto.InternalMessageInfo
-
-func (m *Container) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
+func (m *CreateConsignmentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateConsignmentResponse.DiscardUnknown(m)
 }
 
-func (m *Container) GetCustomerId() string {
-	if m != nil {
-		return m.CustomerId
-	}
-	return ""
-}
+var xxx_messageInfo_CreateConsignmentResponse proto.InternalMessageInfo
 
-func (m *Container) GetOrigin() string {
-	if m != nil {
-		return m.Origin
-	}
-	return ""
-}
-
-func (m *Container) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
-// 托运结果
-type Response struct {
-	Created              bool           `protobuf:"varint,1,opt,name=created,proto3" json:"created,omitempty"`
-	Consignment          *Consignment   `protobuf:"bytes,2,opt,name=consignment,proto3" json:"consignment,omitempty"`
-	Consignments         []*Consignment `protobuf:"bytes,3,rep,name=consignments,proto3" json:"consignments,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *Response) Reset()         { *m = Response{} }
-func (m *Response) String() string { return proto.CompactTextString(m) }
-func (*Response) ProtoMessage()    {}
-func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3804bf87090b51a9, []int{2}
-}
-
-func (m *Response) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Response.Unmarshal(m, b)
-}
-func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Response.Marshal(b, m, deterministic)
-}
-func (m *Response) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Response.Merge(m, src)
-}
-func (m *Response) XXX_Size() int {
-	return xxx_messageInfo_Response.Size(m)
-}
-func (m *Response) XXX_DiscardUnknown() {
-	xxx_messageInfo_Response.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Response proto.InternalMessageInfo
-
-func (m *Response) GetCreated() bool {
+func (m *CreateConsignmentResponse) GetCreated() bool {
 	if m != nil {
 		return m.Created
 	}
 	return false
 }
 
-func (m *Response) GetConsignment() *Consignment {
+func (m *CreateConsignmentResponse) GetConsignment() *Consignment {
 	if m != nil {
 		return m.Consignment
-	}
-	return nil
-}
-
-func (m *Response) GetConsignments() []*Consignment {
-	if m != nil {
-		return m.Consignments
 	}
 	return nil
 }
@@ -228,7 +146,7 @@ func (m *GetRequest) Reset()         { *m = GetRequest{} }
 func (m *GetRequest) String() string { return proto.CompactTextString(m) }
 func (*GetRequest) ProtoMessage()    {}
 func (*GetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3804bf87090b51a9, []int{3}
+	return fileDescriptor_3804bf87090b51a9, []int{2}
 }
 
 func (m *GetRequest) XXX_Unmarshal(b []byte) error {
@@ -249,39 +167,75 @@ func (m *GetRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetRequest proto.InternalMessageInfo
 
+type GetConsignmentsResponse struct {
+	Consignments         []*Consignment `protobuf:"bytes,1,rep,name=consignments,proto3" json:"consignments,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *GetConsignmentsResponse) Reset()         { *m = GetConsignmentsResponse{} }
+func (m *GetConsignmentsResponse) String() string { return proto.CompactTextString(m) }
+func (*GetConsignmentsResponse) ProtoMessage()    {}
+func (*GetConsignmentsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3804bf87090b51a9, []int{3}
+}
+
+func (m *GetConsignmentsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetConsignmentsResponse.Unmarshal(m, b)
+}
+func (m *GetConsignmentsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetConsignmentsResponse.Marshal(b, m, deterministic)
+}
+func (m *GetConsignmentsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetConsignmentsResponse.Merge(m, src)
+}
+func (m *GetConsignmentsResponse) XXX_Size() int {
+	return xxx_messageInfo_GetConsignmentsResponse.Size(m)
+}
+func (m *GetConsignmentsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetConsignmentsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetConsignmentsResponse proto.InternalMessageInfo
+
+func (m *GetConsignmentsResponse) GetConsignments() []*Consignment {
+	if m != nil {
+		return m.Consignments
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Consignment)(nil), "shippy.service.consignment.Consignment")
-	proto.RegisterType((*Container)(nil), "shippy.service.consignment.Container")
-	proto.RegisterType((*Response)(nil), "shippy.service.consignment.Response")
+	proto.RegisterType((*CreateConsignmentResponse)(nil), "shippy.service.consignment.CreateConsignmentResponse")
 	proto.RegisterType((*GetRequest)(nil), "shippy.service.consignment.GetRequest")
+	proto.RegisterType((*GetConsignmentsResponse)(nil), "shippy.service.consignment.GetConsignmentsResponse")
 }
 
 func init() { proto.RegisterFile("consignment.proto", fileDescriptor_3804bf87090b51a9) }
 
 var fileDescriptor_3804bf87090b51a9 = []byte{
-	// 349 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xcd, 0x4e, 0xeb, 0x30,
-	0x10, 0x85, 0x6f, 0xfa, 0x9f, 0x49, 0x75, 0xab, 0x7a, 0x71, 0x6f, 0x54, 0x16, 0x44, 0x11, 0x3f,
-	0x5d, 0x65, 0x51, 0x1e, 0xa1, 0x42, 0x55, 0xc4, 0xce, 0x7d, 0x00, 0x54, 0xe2, 0x51, 0x6a, 0x89,
-	0xda, 0x21, 0xe3, 0x16, 0xf1, 0x6c, 0xf0, 0x24, 0x3c, 0x0d, 0x8a, 0xd3, 0x50, 0x23, 0x44, 0xe9,
-	0xce, 0x67, 0x3c, 0xdf, 0x9c, 0x33, 0x96, 0x61, 0x9c, 0x69, 0x45, 0x32, 0x57, 0x1b, 0x54, 0x26,
-	0x29, 0x4a, 0x6d, 0x34, 0x9b, 0xd0, 0x5a, 0x16, 0xc5, 0x4b, 0x42, 0x58, 0xee, 0x64, 0x86, 0x89,
-	0xd3, 0x11, 0xbf, 0x7a, 0x10, 0xcc, 0x0f, 0x9a, 0xfd, 0x85, 0x96, 0x14, 0xa1, 0x17, 0x79, 0x53,
-	0x9f, 0xb7, 0xa4, 0x60, 0x11, 0x04, 0x02, 0x29, 0x2b, 0x65, 0x61, 0xa4, 0x56, 0x61, 0xcb, 0x5e,
-	0xb8, 0x25, 0xf6, 0x0f, 0x7a, 0xcf, 0x28, 0xf3, 0xb5, 0x09, 0xdb, 0x91, 0x37, 0xed, 0xf2, 0xbd,
-	0x62, 0xb7, 0x00, 0x99, 0x56, 0x66, 0x25, 0x15, 0x96, 0x14, 0x76, 0xa2, 0xf6, 0x34, 0x98, 0x5d,
-	0x26, 0x3f, 0x47, 0x49, 0xe6, 0x4d, 0x37, 0x77, 0x40, 0x76, 0x06, 0xfe, 0x0e, 0x89, 0xf0, 0xf1,
-	0x5e, 0x8a, 0xb0, 0x6b, 0xed, 0x07, 0x75, 0x21, 0x15, 0xf1, 0x06, 0xfc, 0x4f, 0xea, 0x5b, 0xf4,
-	0x73, 0x08, 0xb2, 0x2d, 0x19, 0xbd, 0xc1, 0xb2, 0x62, 0xeb, 0xe8, 0xd0, 0x94, 0x52, 0x51, 0x25,
-	0xd7, 0xa5, 0xcc, 0xa5, 0xb2, 0xc9, 0x7d, 0xbe, 0x57, 0xec, 0x3f, 0xf4, 0xb7, 0x54, 0x43, 0x9d,
-	0xfa, 0xa2, 0x92, 0xa9, 0x88, 0xdf, 0x3c, 0x18, 0x70, 0xa4, 0x42, 0x2b, 0x42, 0x16, 0x42, 0x3f,
-	0x2b, 0x71, 0x65, 0xb0, 0xf6, 0x1c, 0xf0, 0x46, 0xb2, 0x14, 0x02, 0x67, 0x2f, 0x6b, 0x1c, 0xcc,
-	0xae, 0x7f, 0x59, 0xbd, 0x39, 0x73, 0x97, 0x65, 0x77, 0x30, 0x74, 0x24, 0x85, 0x6d, 0xfb, 0x8c,
-	0x27, 0xcf, 0xfa, 0x02, 0xc7, 0x43, 0x80, 0x05, 0x1a, 0x8e, 0x4f, 0x5b, 0x24, 0x33, 0x7b, 0xf7,
-	0x60, 0xb4, 0xac, 0xc6, 0x48, 0x95, 0x2f, 0xeb, 0x39, 0x4c, 0xc0, 0x78, 0x6e, 0x97, 0x70, 0xbf,
-	0xc4, 0xa9, 0x6e, 0x93, 0x8b, 0x63, 0x8d, 0xcd, 0xbb, 0xc5, 0x7f, 0xd8, 0x0a, 0x46, 0x0b, 0x34,
-	0x0e, 0x49, 0xec, 0xea, 0x18, 0x7a, 0x08, 0x7d, 0xaa, 0xc5, 0x43, 0xcf, 0xfe, 0xfc, 0x9b, 0x8f,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0x0a, 0x6f, 0x82, 0x46, 0x0e, 0x03, 0x00, 0x00,
+	// 293 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x4f, 0x4f, 0xf2, 0x40,
+	0x10, 0xc6, 0xd9, 0xf2, 0xbe, 0x08, 0x53, 0x22, 0x61, 0x0e, 0xba, 0xd6, 0x4b, 0xb3, 0x07, 0xe5,
+	0xd4, 0x03, 0xc4, 0x4f, 0xc0, 0x81, 0x10, 0x6f, 0xe5, 0x03, 0x18, 0x6d, 0xc7, 0xb2, 0x89, 0x6e,
+	0xd7, 0xce, 0x82, 0xf1, 0xe6, 0xe7, 0xf6, 0x64, 0x6c, 0x55, 0xd6, 0x3f, 0xa0, 0x1e, 0x67, 0xe7,
+	0xf9, 0xcd, 0x3c, 0xf3, 0x64, 0x61, 0x98, 0x95, 0x86, 0x75, 0x61, 0x6e, 0xc9, 0xb8, 0xc4, 0x56,
+	0xa5, 0x2b, 0x31, 0xe2, 0xa5, 0xb6, 0xf6, 0x21, 0x61, 0xaa, 0xd6, 0x3a, 0xa3, 0xc4, 0x53, 0x28,
+	0x07, 0xe1, 0x74, 0x53, 0xe2, 0x3e, 0x04, 0x3a, 0x97, 0x22, 0x16, 0xa3, 0x5e, 0x1a, 0xe8, 0x1c,
+	0x63, 0x08, 0x73, 0xe2, 0xac, 0xd2, 0xd6, 0xe9, 0xd2, 0xc8, 0xa0, 0x6e, 0xf8, 0x4f, 0x78, 0x00,
+	0x9d, 0x7b, 0xd2, 0xc5, 0xd2, 0xc9, 0x76, 0x2c, 0x46, 0xff, 0xd3, 0xd7, 0x0a, 0x8f, 0xa1, 0xb7,
+	0x26, 0x66, 0xba, 0xb9, 0xd0, 0xb9, 0xfc, 0x57, 0x73, 0xdd, 0xe6, 0x61, 0x9e, 0xab, 0x47, 0x01,
+	0x47, 0xd3, 0x8a, 0x2e, 0x1d, 0x79, 0xcb, 0x53, 0x62, 0x5b, 0x1a, 0x26, 0x94, 0xb0, 0x97, 0xd5,
+	0xcd, 0xc6, 0x49, 0x37, 0x7d, 0x2b, 0x71, 0x0e, 0xa1, 0x67, 0xbe, 0xb6, 0x13, 0x8e, 0x4f, 0x93,
+	0xed, 0xf7, 0x25, 0xfe, 0x7c, 0x9f, 0x55, 0x7d, 0x80, 0x19, 0xb9, 0x94, 0xee, 0x56, 0xc4, 0x4e,
+	0x5d, 0xc3, 0xe1, 0x8c, 0x9c, 0x27, 0xe6, 0x77, 0x37, 0xe7, 0xd0, 0xf7, 0x38, 0x96, 0x22, 0x6e,
+	0xff, 0x65, 0xe9, 0x07, 0x78, 0xfc, 0x24, 0x60, 0xb0, 0x78, 0x01, 0xb5, 0x29, 0x16, 0x0d, 0x89,
+	0x2b, 0x18, 0x7e, 0xc9, 0x02, 0x7f, 0x3b, 0x3f, 0x3a, 0xdb, 0x29, 0xdc, 0x96, 0xb1, 0x6a, 0xa1,
+	0x85, 0xc1, 0xa7, 0x93, 0xf1, 0x64, 0xd7, 0xac, 0x4d, 0x5a, 0xd1, 0xe4, 0x07, 0xdd, 0x77, 0x39,
+	0xaa, 0xd6, 0x55, 0xa7, 0xfe, 0x8e, 0x93, 0xe7, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9f, 0x57, 0xd6,
+	0xa0, 0xa3, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -292,10 +246,8 @@ var _ server.Option
 // Client API for ShippingService service
 
 type ShippingServiceClient interface {
-	// 托运一批货物
-	CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*Response, error)
-	// 查看所有货物
-	GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error)
+	CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*CreateConsignmentResponse, error)
+	GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetConsignmentsResponse, error)
 }
 
 type shippingServiceClient struct {
@@ -316,9 +268,9 @@ func NewShippingServiceClient(serviceName string, c client.Client) ShippingServi
 	}
 }
 
-func (c *shippingServiceClient) CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*Response, error) {
+func (c *shippingServiceClient) CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*CreateConsignmentResponse, error) {
 	req := c.c.NewRequest(c.serviceName, "ShippingService.CreateConsignment", in)
-	out := new(Response)
+	out := new(CreateConsignmentResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -326,9 +278,9 @@ func (c *shippingServiceClient) CreateConsignment(ctx context.Context, in *Consi
 	return out, nil
 }
 
-func (c *shippingServiceClient) GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error) {
+func (c *shippingServiceClient) GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetConsignmentsResponse, error) {
 	req := c.c.NewRequest(c.serviceName, "ShippingService.GetConsignments", in)
-	out := new(Response)
+	out := new(GetConsignmentsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -339,10 +291,8 @@ func (c *shippingServiceClient) GetConsignments(ctx context.Context, in *GetRequ
 // Server API for ShippingService service
 
 type ShippingServiceHandler interface {
-	// 托运一批货物
-	CreateConsignment(context.Context, *Consignment, *Response) error
-	// 查看所有货物
-	GetConsignments(context.Context, *GetRequest, *Response) error
+	CreateConsignment(context.Context, *Consignment, *CreateConsignmentResponse) error
+	GetConsignments(context.Context, *GetRequest, *GetConsignmentsResponse) error
 }
 
 func RegisterShippingServiceHandler(s server.Server, hdlr ShippingServiceHandler, opts ...server.HandlerOption) {
@@ -353,10 +303,10 @@ type ShippingService struct {
 	ShippingServiceHandler
 }
 
-func (h *ShippingService) CreateConsignment(ctx context.Context, in *Consignment, out *Response) error {
+func (h *ShippingService) CreateConsignment(ctx context.Context, in *Consignment, out *CreateConsignmentResponse) error {
 	return h.ShippingServiceHandler.CreateConsignment(ctx, in, out)
 }
 
-func (h *ShippingService) GetConsignments(ctx context.Context, in *GetRequest, out *Response) error {
+func (h *ShippingService) GetConsignments(ctx context.Context, in *GetRequest, out *GetConsignmentsResponse) error {
 	return h.ShippingServiceHandler.GetConsignments(ctx, in, out)
 }

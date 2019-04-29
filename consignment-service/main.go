@@ -5,7 +5,7 @@ import (
 	"context"
 	"log"
 
-	pb "github.com/hellodudu/shippy/consignment-service/proto"
+	pb "github.com/hellodudu/shippy/proto"
 	"github.com/micro/go-micro"
 )
 
@@ -14,7 +14,8 @@ const (
 )
 
 type IRepository interface {
-	Create(consignment *pb.Consignment) (*pb.Consignment, error) // 存放新货物
+	Create(consignment *pb.Consignment) (*pb.Consignment, error)
+	GetAll() []*pb.Consignment
 }
 
 type Repository struct {
@@ -31,11 +32,10 @@ func (repo *Repository) GetAll() []*pb.Consignment {
 }
 
 type service struct {
-	repo Repository
+	repo IRepository
 }
 
-func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, out *pb.Response) error {
-	log.Println("recv req:", req)
+func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, out *pb.CreateConsignmentResponse) error {
 	consignment, err := s.repo.Create(req)
 	if err != nil {
 		return err
@@ -43,12 +43,11 @@ func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, ou
 
 	out.Created = true
 	out.Consignment = consignment
-	out.Consignments = s.repo.consignments
 	return nil
 }
 
-func (s *service) GetConsignments(ctx context.Context, _ *pb.GetRequest, out *pb.Response) error {
-	out.Consignments = s.repo.consignments
+func (s *service) GetConsignments(ctx context.Context, _ *pb.GetRequest, out *pb.GetConsignmentsResponse) error {
+	out.Consignments = s.repo.GetAll()
 	return nil
 }
 
@@ -58,7 +57,7 @@ func main() {
 	)
 
 	server.Init()
-	repo := Repository{}
+	repo := &Repository{}
 
 	pb.RegisterShippingServiceHandler(server.Server(), &service{repo})
 
