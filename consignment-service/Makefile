@@ -1,6 +1,6 @@
 .PHONY: proto
 proto:
-	protoc -I=../proto --go_out=plugins=micro:../proto ../proto/consignment/consignment.proto
+	protoc -I=../proto --go_out=plugins=micro:../proto ../proto/consignment.proto
 
 .PHONY: build
 build:
