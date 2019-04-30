@@ -17,8 +17,7 @@ message Vessel {
 }
 
 message Specification {
-    int32 capacity = 1;     
-    int32 max_weight = 2;   
+    int32 weight = 1;   
 }
 
 message Response {

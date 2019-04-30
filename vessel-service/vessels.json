@@ -4,7 +4,7 @@
             "available": true,
             "capacity": 100,
             "id": "1",
-            "maxWeight": 1000,
+            "max_weight": 1000,
             "name": "自然选择号",
             "owerId": "10001"
         },
@@ -13,7 +13,7 @@
             "available": true,
             "capacity": 200,
             "id": "2",
-            "maxWeight": 2000,
+            "max_weight": 2000,
             "name": "蓝色空间号",
             "owerId": "10002"
         }

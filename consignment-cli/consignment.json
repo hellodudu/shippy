@@ -1,6 +1,6 @@
 {
   "id": "1",
-  "description": "This is a test consignment",
-  "weight": 550,
+  "description": "洋山港1号集装箱",
+  "weight": 1550,
   "vessel_id": "vessel001"
 }
