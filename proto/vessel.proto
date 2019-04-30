@@ -16,15 +16,11 @@ message Vessel {
     string ower_id = 6;     
 }
 
-// 等待运送的货物
 message Specification {
-    int32 capacity = 1;     // 容量（内部集装箱的个数）
-    int32 max_weight = 2;   // 重量
+    int32 capacity = 1;     
+    int32 max_weight = 2;   
 }
 
-// 货轮装得下的话
-// 返回的多条货轮信息
 message Response {
-    Vessel vessel = 1;
-    repeated Vessel vessels = 2;
+    repeated Vessel vessels = 1;
 }

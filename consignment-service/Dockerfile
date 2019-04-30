@@ -4,7 +4,6 @@ RUN mkdir /app
 
 WORKDIR /app
 
-ADD consignment-service /app/consignment-service
+COPY shippy-service-consignment /app/shippy-service-consignment 
 
-# 运行服务端
-ENTRYPOINT ["./consignment-service"]
+ENTRYPOINT ["./shippy-service-consignment"]
