@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	pb "github.com/hellodudu/shippy/proto"
+	pbCons "github.com/hellodudu/shippy/proto/consignment"
 	micro "github.com/micro/go-micro"
 )
 
@@ -16,12 +16,12 @@ const (
 	DEFAULT_INFO_FILE = "consignment.json"
 )
 
-func parseFile(fileName string) (*pb.Consignment, error) {
+func parseFile(fileName string) (*pbCons.Consignment, error) {
 	data, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return nil, err
 	}
-	var consignment *pb.Consignment
+	var consignment *pbCons.Consignment
 	err = json.Unmarshal(data, &consignment)
 	if err != nil {
 		return nil, errors.New("consignment.json file content error")
@@ -39,7 +39,7 @@ func main() {
 	service := micro.NewService(micro.Name("shippy.consignment.cli"))
 	service.Init()
 
-	client := pb.NewShippingServiceClient("shippy.service.consignment", service.Client())
+	client := pbCons.NewShippingServiceClient("shippy.service.consignment", service.Client())
 
 	consignment, err := parseFile(infoFile)
 	if err != nil {
@@ -53,7 +53,7 @@ func main() {
 
 	log.Printf("CreateConsignment response: %v", createResp)
 
-	getResp, err := client.GetConsignments(context.Background(), &pb.GetRequest{})
+	getResp, err := client.GetConsignments(context.Background(), &pbCons.GetRequest{})
 	if err != nil {
 		log.Fatalf("get consignment error: %v", err)
 	}

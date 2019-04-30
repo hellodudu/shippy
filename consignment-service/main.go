@@ -5,7 +5,7 @@ import (
 	"context"
 	"log"
 
-	pb "github.com/hellodudu/shippy/proto"
+	pbCons "github.com/hellodudu/shippy/proto/consignment"
 	"github.com/micro/go-micro"
 )
 
@@ -14,20 +14,20 @@ const (
 )
 
 type IRepository interface {
-	Create(consignment *pb.Consignment) (*pb.Consignment, error)
-	GetAll() []*pb.Consignment
+	Create(consignment *pbCons.Consignment) (*pbCons.Consignment, error)
+	GetAll() []*pbCons.Consignment
 }
 
 type Repository struct {
-	consignments []*pb.Consignment
+	consignments []*pbCons.Consignment
 }
 
-func (repo *Repository) Create(consignment *pb.Consignment) (*pb.Consignment, error) {
+func (repo *Repository) Create(consignment *pbCons.Consignment) (*pbCons.Consignment, error) {
 	repo.consignments = append(repo.consignments, consignment)
 	return consignment, nil
 }
 
-func (repo *Repository) GetAll() []*pb.Consignment {
+func (repo *Repository) GetAll() []*pbCons.Consignment {
 	return repo.consignments
 }
 
@@ -35,7 +35,7 @@ type service struct {
 	repo IRepository
 }
 
-func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, out *pb.CreateConsignmentResponse) error {
+func (s *service) CreateConsignment(ctx context.Context, req *pbCons.Consignment, out *pbCons.CreateConsignmentResponse) error {
 	consignment, err := s.repo.Create(req)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, ou
 	return nil
 }
 
-func (s *service) GetConsignments(ctx context.Context, _ *pb.GetRequest, out *pb.GetConsignmentsResponse) error {
+func (s *service) GetConsignments(ctx context.Context, _ *pbCons.GetRequest, out *pbCons.GetConsignmentsResponse) error {
 	out.Consignments = s.repo.GetAll()
 	return nil
 }
@@ -59,7 +59,7 @@ func main() {
 	server.Init()
 	repo := &Repository{}
 
-	pb.RegisterShippingServiceHandler(server.Server(), &service{repo})
+	pbCons.RegisterShippingServiceHandler(server.Server(), &service{repo})
 
 	if err := server.Run(); err != nil {
 		log.Fatalf("failed to serve: %v", err)
