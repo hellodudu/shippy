@@ -1,12 +1,8 @@
 version: "3"
 services:
-  consignment-cli:
-    build: ./consignment-cli
-    environment:
-      MICRO_REGISTRY: "mdns"
-
   consignment-service:
-    build: ./consignment-service
+    build: consignment-service/
+    image: shippy-service-consignment
     ports:
       - 50051:50051
     environment:
@@ -15,7 +11,8 @@ services:
       DB_HOST: "datastore:27017"
 
   vessel-service:
-    build: /vessel-service
+    build: vessel-service/
+    image: shippy-service-vessel
     ports:
       - 50052:50051
     environment:
