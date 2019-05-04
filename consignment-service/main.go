@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hellodudu/shippy/consignment-service/repo"
 	pbCons "github.com/hellodudu/shippy/proto/consignment"
 	pbVesl "github.com/hellodudu/shippy/proto/vessel"
 	"github.com/micro/go-micro"
@@ -15,33 +16,15 @@ const (
 	PORT = ":50051"
 )
 
-type IRepository interface {
-	Create(consignment *pbCons.Consignment) (*pbCons.Consignment, error)
-	GetAll() []*pbCons.Consignment
-}
-
-type Repository struct {
-	consignments []*pbCons.Consignment
-}
-
-func (repo *Repository) Create(consignment *pbCons.Consignment) (*pbCons.Consignment, error) {
-	repo.consignments = append(repo.consignments, consignment)
-	return consignment, nil
-}
-
-func (repo *Repository) GetAll() []*pbCons.Consignment {
-	return repo.consignments
-}
-
 type service struct {
-	repo       IRepository
-	veslClient pbVesl.VesselServiceClient
+	r repo.IRepository
+	c pbVesl.VesselServiceClient
 }
 
 func (s *service) CreateConsignment(ctx context.Context, req *pbCons.Consignment, out *pbCons.CreateConsignmentResponse) error {
 
 	spec := &pbVesl.Specification{Weight: req.Weight}
-	resp, err := s.veslClient.FindAvailable(ctx, spec)
+	resp, err := s.c.FindAvailable(ctx, spec)
 	if err != nil {
 		return err
 	}
@@ -54,23 +37,27 @@ func (s *service) CreateConsignment(ctx context.Context, req *pbCons.Consignment
 		return errors.New(errs)
 	}
 
-	consignment, err := s.repo.Create(req)
-	if err != nil {
+	if err := s.r.Create(req); err != nil {
 		return err
 	}
 
 	out.Created = true
-	out.Consignment = consignment
+	out.Consignment = req
 	return nil
 }
 
 func (s *service) GetConsignments(ctx context.Context, _ *pbCons.GetRequest, out *pbCons.GetConsignmentsResponse) error {
-	out.Consignments = s.repo.GetAll()
-	return nil
+	var err error
+	out.Consignments, err = s.r.GetAll()
+	return err
 }
 
 func main() {
-	s := &service{repo: &Repository{}}
+	s := &service{}
+	var err error
+	if s.r, err = repo.NewRepository(); err != nil {
+		log.Fatalf("failed to call NewRepository(): %v", err)
+	}
 
 	srv := micro.NewService(
 		micro.Name("shippy.service.consignment"),
@@ -79,7 +66,7 @@ func main() {
 	srv.Init()
 
 	// client
-	s.veslClient = pbVesl.NewVesselServiceClient("shippy.service.vessel", nil)
+	s.c = pbVesl.NewVesselServiceClient("shippy.service.vessel", nil)
 
 	// service
 	pbCons.RegisterShippingServiceHandler(srv.Server(), s)
