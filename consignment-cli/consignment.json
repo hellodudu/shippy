@@ -1,6 +1,6 @@
 {
-  "id": "1",
-  "description": "洋山港1号集装箱",
-  "weight": 1550,
-  "vessel_id": "vessel001"
+  "id": "2",
+  "description": "洋山港2号集装箱",
+  "weight": 1770,
+  "vessel_id": "vessel002"
 }

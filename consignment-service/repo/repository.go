@@ -14,6 +14,7 @@ const (
 type IRepository interface {
 	Create(consignment *pbCons.Consignment) error
 	GetAll() ([]*pbCons.Consignment, error)
+	Close()
 }
 
 type repository struct {
@@ -33,6 +34,10 @@ func NewRepository() (IRepository, error) {
 
 func (repo *repository) collection() *mgo.Collection {
 	return repo.session.DB(DB_NAME).C(CON_COLLECTION)
+}
+
+func (repo *repository) Close() {
+	repo.session.Close()
 }
 
 func (repo *repository) Create(c *pbCons.Consignment) error {
