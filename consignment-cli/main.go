@@ -3,60 +3,82 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"log"
-	"os"
 
 	pbCons "github.com/hellodudu/shippy/proto/consignment"
+	pbVesl "github.com/hellodudu/shippy/proto/vessel"
 	micro "github.com/micro/go-micro"
 )
 
 const (
-	DEFAULT_INFO_FILE = "consignment.json"
+	CONSIGNMENT_FILE = "consignments.json"
+	VESSEL_FILE      = "vessels.json"
 )
 
-func parseFile(fileName string) (*pbCons.Consignment, error) {
-	data, err := ioutil.ReadFile(fileName)
+func createConsignment(s micro.Service) {
+	client := pbCons.NewShippingServiceClient("shippy.service.consignment", s.Client())
+
+	// read consignment file
+	data, err := ioutil.ReadFile(CONSIGNMENT_FILE)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-	var consignment *pbCons.Consignment
-	err = json.Unmarshal(data, &consignment)
+
+	var consignments []*pbCons.Consignment
+	err = json.Unmarshal(data, &consignments)
 	if err != nil {
-		return nil, errors.New("consignment.json file content error")
+		log.Fatal("consignments.json file content error")
 	}
-	return consignment, nil
+
+	for _, v := range consignments {
+		createResp, err := client.CreateConsignment(context.Background(), v)
+		if err != nil {
+			log.Fatalf("create consignment error: %v", err)
+		}
+
+		log.Println("CreateConsignment response: %v", createResp)
+	}
+
+	getResp, err := client.GetConsignments(context.Background(), &pbCons.GetRequest{})
+	if err != nil {
+		log.Fatalf("GetConsignments error: %v", err)
+	}
+
+	log.Printf("GetConsignments response : %v", getResp)
+}
+
+func createVessel(s micro.Service) {
+	client := pbVesl.NewVesselServiceClient("shippy.service.vessel", s.Client())
+
+	// read vessel file
+	data, err = ioutil.ReadFile(VESSEL_FILE)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var vessels []*pbVesl.Vessel
+	err = json.Unmarshal(data, &vessels)
+	if err != nil {
+		log.Fatal("vessels.json file content error")
+	}
+
+	for _, v := range vessels {
+		createResp, err := client.Create(context.Background(), v)
+		if err != nil {
+			log.Fatalf("create vessels error: %v", err)
+		}
+
+		log.Println("CreateVessels response: %v", createResp)
+	}
 }
 
 func main() {
 
-	infoFile := DEFAULT_INFO_FILE
-	if len(os.Args) > 1 {
-		infoFile = os.Args[1]
-	}
-
 	service := micro.NewService(micro.Name("shippy.consignment.cli"))
 	service.Init()
 
-	client := pbCons.NewShippingServiceClient("shippy.service.consignment", service.Client())
+	createConsignment(service)
+	createVessel(service)
 
-	consignment, err := parseFile(infoFile)
-	if err != nil {
-		log.Fatalf("parse info file error: %v", err)
-	}
-
-	createResp, err := client.CreateConsignment(context.Background(), consignment)
-	if err != nil {
-		log.Fatalf("create consignment error: %v", err)
-	}
-
-	log.Printf("CreateConsignment response: %v", createResp)
-
-	getResp, err := client.GetConsignments(context.Background(), &pbCons.GetRequest{})
-	if err != nil {
-		log.Fatalf("get consignment error: %v", err)
-	}
-
-	log.Printf("GetConsignment response : %v", getResp)
 }

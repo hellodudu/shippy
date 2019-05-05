@@ -1,0 +1,17 @@
+{
+    "consignments": [
+        {
+            "description": "洋山港2号集装箱",
+            "id": "2",
+            "vessel_id": "vessel002",
+            "weight": 1770
+        },
+
+        {
+            "description": "洋山港1号集装箱",
+            "id": "1",
+            "vessel_id": "vessel001",
+            "weight": 1230
+        }
+    ]
+}
