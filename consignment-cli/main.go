@@ -25,13 +25,16 @@ func createConsignment(s micro.Service) {
 		log.Fatal(err)
 	}
 
-	var consignments []*pbCons.Consignment
-	err = json.Unmarshal(data, &consignments)
-	if err != nil {
-		log.Fatal("consignments.json file content error")
+	var consignments struct {
+		Cons []*pbCons.Consignment `json:"consignments"`
 	}
 
-	for _, v := range consignments {
+	err = json.Unmarshal(data, &consignments)
+	if err != nil {
+		log.Fatal("consignments.json file content error:", err)
+	}
+
+	for _, v := range consignments.Cons {
 		createResp, err := client.CreateConsignment(context.Background(), v)
 		if err != nil {
 			log.Fatalf("create consignment error: %v", err)
@@ -57,13 +60,16 @@ func createVessel(s micro.Service) {
 		log.Fatal(err)
 	}
 
-	var vessels []*pbVesl.Vessel
-	err = json.Unmarshal(data, &vessels)
-	if err != nil {
-		log.Fatal("vessels.json file content error")
+	var vessels struct {
+		Vs []*pbVesl.Vessel `json:"vessels"`
 	}
 
-	for _, v := range vessels {
+	err = json.Unmarshal(data, &vessels)
+	if err != nil {
+		log.Fatal("vessels.json file content error", err)
+	}
+
+	for _, v := range vessels.Vs {
 		createResp, err := client.Create(context.Background(), v)
 		if err != nil {
 			log.Fatalf("create vessels error: %v", err)
@@ -78,7 +84,6 @@ func main() {
 	service := micro.NewService(micro.Name("shippy.consignment.cli"))
 	service.Init()
 
-	createConsignment(service)
 	createVessel(service)
-
+	createConsignment(service)
 }

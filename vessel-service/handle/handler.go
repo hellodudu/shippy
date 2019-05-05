@@ -35,6 +35,8 @@ func (v *VeslSrvHandler) Create(ctx context.Context, vesl *pbVesl.Vessel, resp *
 		resp.Success = false
 	}
 
+	log.Println("VeslSrvHandler Create result:", resp.Success)
+
 	return err
 }
 

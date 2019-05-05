@@ -31,6 +31,9 @@ func NewRepository() (IRepository, error) {
 
 	var err error
 	r.session, err = db.NewSession("localhost:27017")
+	if err != nil {
+		return nil, err
+	}
 
 	s := r.session.Copy()
 	defer s.Close()
@@ -57,6 +60,8 @@ func (repo *repository) Create(c *pbCons.Consignment) error {
 
 	s := repo.session.Copy()
 	defer s.Close()
+
+	repo.consignments = append(repo.consignments, c)
 
 	return repo.collection(s).Insert(c)
 }

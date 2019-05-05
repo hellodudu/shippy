@@ -57,6 +57,8 @@ func (repo *repository) Create(v *pbVesl.Vessel) error {
 		}
 	}
 
+	repo.vessels = append(repo.vessels, v)
+
 	s := repo.session.Copy()
 	defer s.Close()
 
