@@ -5,7 +5,6 @@ proto:
 .PHONY: build
 build:
 	env GOOS=linux GOARCH=amd64 go build -o shippy-service-consignment
-	docker build -t shippy-service-consignment .
 
 .PHONY: run
 run:

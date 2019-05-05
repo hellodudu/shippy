@@ -52,7 +52,7 @@ func createVessel(s micro.Service) {
 	client := pbVesl.NewVesselServiceClient("shippy.service.vessel", s.Client())
 
 	// read vessel file
-	data, err = ioutil.ReadFile(VESSEL_FILE)
+	data, err := ioutil.ReadFile(VESSEL_FILE)
 	if err != nil {
 		log.Fatal(err)
 	}
