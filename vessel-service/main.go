@@ -16,7 +16,11 @@ type vesselService struct {
 	Vessels []*pbVesl.Vessel
 }
 
-func (v *vesselService) FindAvailable(ctx context.Context, spec *pbVesl.Specification, resp *pbVesl.Response) error {
+func (v *vesselService) Create(ctx context.Context, vesl *pbVesl.Vessel, resp *pbVesl.CreateResp) error {
+
+}
+
+func (v *vesselService) FindAvailable(ctx context.Context, spec *pbVesl.Specification, resp *pbVesl.FindAvailableResp) error {
 	for _, val := range v.Vessels {
 		if val.MaxWeight >= spec.Weight {
 			resp.Vessels = append(resp.Vessels, val)

@@ -29,6 +29,10 @@ func NewConsSrvHandler() (*ConsSrvHandler, error) {
 	return h, err
 }
 
+func (s *ConsSrvHandler) Close() {
+	s.r.Close()
+}
+
 func (s *ConsSrvHandler) CreateConsignment(ctx context.Context, req *pbCons.Consignment, out *pbCons.CreateConsignmentResponse) error {
 
 	spec := &pbVesl.Specification{Weight: req.Weight}
@@ -48,7 +52,6 @@ func (s *ConsSrvHandler) CreateConsignment(ctx context.Context, req *pbCons.Cons
 	if err := s.r.Create(req); err != nil {
 		return err
 	}
-	defer s.r.Close()
 
 	out.Created = true
 	out.Consignment = req
@@ -58,6 +61,5 @@ func (s *ConsSrvHandler) CreateConsignment(ctx context.Context, req *pbCons.Cons
 func (s *ConsSrvHandler) GetConsignments(ctx context.Context, _ *pbCons.GetRequest, out *pbCons.GetConsignmentsResponse) error {
 	var err error
 	out.Consignments, err = s.r.GetAll()
-	defer s.r.Close()
 	return err
 }

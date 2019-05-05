@@ -3,7 +3,10 @@ syntax = "proto3";
 package shippy.service.vessel;
 
 service VesselService {
-    rpc FindAvailable (Specification) returns (Response) {
+    rpc Create (Vessel) returns (CreateResp) {
+    }
+
+    rpc FindAvailable (Specification) returns (FindAvailableResp) {
     }
 }
 
@@ -20,6 +23,10 @@ message Specification {
     int32 weight = 1;   
 }
 
-message Response {
+message CreateResp {
+    bool success = 1;
+}
+
+message FindAvailableResp {
     repeated Vessel vessels = 1;
 }

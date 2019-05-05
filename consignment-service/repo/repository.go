@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"fmt"
+
 	"github.com/hellodudu/shippy/consignment-service/db"
 	pbCons "github.com/hellodudu/shippy/proto/consignment"
 	"gopkg.in/mgo.v2"
@@ -29,11 +31,16 @@ func NewRepository() (IRepository, error) {
 
 	var err error
 	r.session, err = db.NewSession("localhost:27017")
+
+	s := r.session.Copy()
+	defer s.Close()
+	r.collection(s).Find(nil).All(&r.consignments)
+
 	return r, err
 }
 
-func (repo *repository) collection() *mgo.Collection {
-	return repo.session.DB(DB_NAME).C(CON_COLLECTION)
+func (repo *repository) collection(s *mgo.Session) *mgo.Collection {
+	return s.DB(DB_NAME).C(CON_COLLECTION)
 }
 
 func (repo *repository) Close() {
@@ -41,11 +48,19 @@ func (repo *repository) Close() {
 }
 
 func (repo *repository) Create(c *pbCons.Consignment) error {
-	return repo.collection().Insert(c)
+
+	for _, value := range repo.consignments {
+		if value.Id == c.Id {
+			return fmt.Errorf("consignment id: %s existed", c.Id)
+		}
+	}
+
+	s := repo.session.Copy()
+	defer s.Close()
+
+	return repo.collection(s).Insert(c)
 }
 
 func (repo *repository) GetAll() ([]*pbCons.Consignment, error) {
-	var cons []*pbCons.Consignment
-	err := repo.collection().Find(nil).All(&cons)
-	return cons, err
+	return repo.consignments, nil
 }
