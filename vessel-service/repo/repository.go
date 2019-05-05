@@ -15,7 +15,7 @@ const (
 
 type IRepository interface {
 	Create(v *pbVesl.Vessel) error
-	FindAvailable(s *pbVesl.Specification) error
+	FindAvailable(s *pbVesl.Specification) ([]*pbVesl.Vessel, error)
 	Close()
 }
 
@@ -31,6 +31,9 @@ func NewRepository() (IRepository, error) {
 
 	var err error
 	r.session, err = db.NewSession("localhost:27017")
+	if err != nil {
+		return nil, err
+	}
 
 	s := r.session.Copy()
 	defer s.Close()
@@ -63,7 +66,7 @@ func (repo *repository) Create(v *pbVesl.Vessel) error {
 func (repo *repository) FindAvailable(s *pbVesl.Specification) ([]*pbVesl.Vessel, error) {
 	ret := make([]*pbVesl.Vessel, 0)
 
-	for _, val := range v.Vessels {
+	for _, val := range repo.vessels {
 		if val.MaxWeight >= s.Weight {
 			ret = append(ret, val)
 		}

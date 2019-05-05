@@ -20,6 +20,8 @@ func main() {
 		log.Fatalf("failed to call NewConsSrvHandler: %v", err)
 	}
 
+	defer h.Close()
+
 	// service
 	pbCons.RegisterShippingServiceHandler(srv.Server(), h)
 

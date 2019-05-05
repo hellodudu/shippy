@@ -1,52 +1,29 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"io/ioutil"
 	"log"
 
 	pbVesl "github.com/hellodudu/shippy/proto/vessel"
+	"github.com/hellodudu/shippy/vessel-service/handle"
 	"github.com/micro/go-micro"
 )
 
 var filename = "vessels.json"
 
-type vesselService struct {
-	Vessels []*pbVesl.Vessel
-}
-
-func (v *vesselService) Create(ctx context.Context, vesl *pbVesl.Vessel, resp *pbVesl.CreateResp) error {
-
-}
-
-func (v *vesselService) FindAvailable(ctx context.Context, spec *pbVesl.Specification, resp *pbVesl.FindAvailableResp) error {
-	for _, val := range v.Vessels {
-		if val.MaxWeight >= spec.Weight {
-			resp.Vessels = append(resp.Vessels, val)
-		}
-	}
-	log.Println("call FindAvailable spec:", spec, ", resp:", resp)
-	return nil
-}
-
 func main() {
-	v := &vesselService{}
-
-	// parse from json
-	b, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatalln("read ", filename, " failed:", err)
-	}
-
-	if err := json.Unmarshal(b, v); err != nil {
-		log.Fatalln("json unmarshal failed:", err)
-	}
 
 	// new micro service
 	srv := micro.NewService(micro.Name("shippy.service.vessel"))
 	srv.Init()
-	pbVesl.RegisterVesselServiceHandler(srv.Server(), v)
+
+	h, err := handle.NewVeslSrvHandler()
+	if err != nil {
+		log.Fatalf("failed to call NewConsSrvHandler: %v", err)
+	}
+
+	defer h.Close()
+
+	pbVesl.RegisterVesselServiceHandler(srv.Server(), h)
 
 	if err := srv.Run(); err != nil {
 		log.Fatalln("failed to serve:", err)
