@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 
@@ -11,7 +12,9 @@ import (
 
 func main() {
 
-	os.Setenv("DB_HOST", "root:@(localhost:3306)/db_shippy")
+	dbHost := flag.String("DB_HOST", "root:@(localhost:3306)/db_shippy", "helpful string")
+	flag.Parse()
+	os.Setenv("DB_HOST", *dbHost)
 
 	// new micro service
 	srv := micro.NewService(micro.Name("shippy.service.user"))
