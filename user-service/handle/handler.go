@@ -6,6 +6,7 @@ import (
 
 	pbUser "github.com/hellodudu/shippy/proto/user"
 	"github.com/hellodudu/shippy/user-service/repo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserSrvHandler struct {
@@ -28,10 +29,37 @@ func (h *UserSrvHandler) Close() {
 }
 
 func (h *UserSrvHandler) Create(ctx context.Context, req *pbUser.User, resp *pbUser.Response) error {
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	req.Password = string(hashedPwd)
 	if err := h.r.Create(req); err != nil {
 		return nil
 	}
 	resp.User = req
+	return nil
+}
+
+func (h *UserSrvHandler) Auth(ctx context.Context, req *pbUser.User, resp *pbUser.Token) error {
+	u, err := h.r.GetByEmailAndPassword(req)
+	if err != nil {
+		return err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.Password)); err != nil {
+		return err
+	}
+	t, err := h.tokenService.Encode(u)
+	if err != nil {
+		return err
+	}
+	resp.Token = t
+	return nil
+}
+
+func (h *UserSrvHandler) ValidateToken(ctx context.Context, req *pb.Token, resp *pb.Token) error {
 	return nil
 }
 
