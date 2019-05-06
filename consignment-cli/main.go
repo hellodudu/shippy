@@ -94,6 +94,7 @@ func createUser() {
 			company := "amazing"
 
 			r, err := client.Create(context.TODO(), &pbUser.User{
+				Id:       "1001",
 				Name:     name,
 				Email:    email,
 				Password: password,
