@@ -33,12 +33,14 @@ func NewRepository() (IRepository, error) {
 		log.Fatal("cannot get env DB_HOST")
 	}
 
+	var err error
 	r.db, err = gorm.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal("failed to connect database")
 	}
 
-	r.db.Find(r.users)
+	r.db.AutoMigrate(&r.users)
+	r.db.Find(&r.users)
 
 	return r, nil
 }
