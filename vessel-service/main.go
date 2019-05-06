@@ -8,8 +8,6 @@ import (
 	"github.com/micro/go-micro"
 )
 
-var filename = "vessels.json"
-
 func main() {
 
 	// new micro service
