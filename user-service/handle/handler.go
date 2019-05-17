@@ -2,19 +2,25 @@ package handle
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 
 	pbUser "github.com/hellodudu/shippy/proto/user"
 	"github.com/hellodudu/shippy/user-service/repo"
+	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/broker"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserSrvHandler struct {
 	r repo.IRepository
+	s micro.Service
 }
 
-func NewUserSrvHandler() (*UserSrvHandler, error) {
-	h := &UserSrvHandler{}
+func NewUserSrvHandler(s micro.Service) (*UserSrvHandler, error) {
+	h := &UserSrvHandler{
+		s: s,
+	}
 
 	var err error
 	if h.r, err = repo.NewRepository(); err != nil {
@@ -22,6 +28,10 @@ func NewUserSrvHandler() (*UserSrvHandler, error) {
 	}
 
 	return h, err
+}
+
+func (h *UserSrvHandler) Broker() broker.Broker {
+	return h.s.Options().Broker
 }
 
 func (h *UserSrvHandler) Close() {
@@ -38,6 +48,11 @@ func (h *UserSrvHandler) Create(ctx context.Context, req *pbUser.User, resp *pbU
 	if err := h.r.Create(req); err != nil {
 		return nil
 	}
+
+	if err := h.publishEvent(req); err != nil {
+		return err
+	}
+
 	resp.User = req
 	return nil
 }
@@ -51,15 +66,15 @@ func (h *UserSrvHandler) Auth(ctx context.Context, req *pbUser.User, resp *pbUse
 	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(req.Password)); err != nil {
 		return err
 	}
-	t, err := h.tokenService.Encode(u)
-	if err != nil {
-		return err
-	}
-	resp.Token = t
+	// t, err := h.tokenService.Encode(u)
+	// if err != nil {
+	// 	return err
+	// }
+	resp.Token = "`x_2nam"
 	return nil
 }
 
-func (h *UserSrvHandler) ValidateToken(ctx context.Context, req *pb.Token, resp *pb.Token) error {
+func (h *UserSrvHandler) ValidateToken(ctx context.Context, req *pbUser.Token, resp *pbUser.Token) error {
 	return nil
 }
 
@@ -78,18 +93,28 @@ func (h *UserSrvHandler) GetAll(ctx context.Context, req *pbUser.Request, resp *
 		return err
 	}
 	resp.Users = users
+
+	log.Println("Get All:", users)
 	return nil
 }
 
-func (h *UserSrvHandler) Auth(ctx context.Context, req *pbUser.User, resp *pbUser.Token) error {
-	_, err := h.r.GetByEmailAndPassword(req)
+func (h *UserSrvHandler) publishEvent(user *pbUser.User) error {
+	body, err := json.Marshal(user)
 	if err != nil {
 		return err
 	}
-	resp.Token = "`x_2nam"
-	return nil
-}
 
-func (h *UserSrvHandler) ValidateToken(ctx context.Context, req *pbUser.Token, resp *pbUser.Token) error {
+	msg := &broker.Message{
+		Header: map[string]string{
+			"id": user.Id,
+		},
+		Body: body,
+	}
+
+	log.Println("publish event:", msg)
+
+	if err := h.Broker().Publish("user.created", msg); err != nil {
+		log.Fatalf("user create publish failed: %v\n", err)
+	}
 	return nil
 }

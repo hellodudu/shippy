@@ -17,10 +17,12 @@ func main() {
 	os.Setenv("DB_HOST", *dbHost)
 
 	// new micro service
-	srv := micro.NewService(micro.Name("shippy.service.user"))
+	srv := micro.NewService(
+		micro.Name("shippy.service.user"),
+	)
 	srv.Init()
 
-	h, err := handle.NewUserSrvHandler()
+	h, err := handle.NewUserSrvHandler(srv)
 	if err != nil {
 		log.Fatalf("failed to call NewUserSrvHandler: %v", err)
 	}

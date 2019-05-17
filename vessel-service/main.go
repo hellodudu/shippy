@@ -14,7 +14,7 @@ func main() {
 	srv := micro.NewService(micro.Name("shippy.service.vessel"))
 	srv.Init()
 
-	h, err := handle.NewVeslSrvHandler()
+	h, err := handle.NewVeslSrvHandler(srv)
 	if err != nil {
 		log.Fatalf("failed to call NewConsSrvHandler: %v", err)
 	}

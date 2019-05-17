@@ -88,12 +88,12 @@ func createUser() {
 
 	service.Init(
 		micro.Action(func(c *cli.Context) {
-			name := "dudu"
+			name := "dudu1"
 			email := "hellodudu86@gmail.com"
 			password := "123qwe"
 			company := "amazing"
 
-			r, err := client.Create(context.TODO(), &pbUser.User{
+			r, err := client.Create(context.Background(), &pbUser.User{
 				Id:       "1001",
 				Name:     name,
 				Email:    email,
@@ -103,7 +103,7 @@ func createUser() {
 			if err != nil {
 				log.Fatalf("Could not create: %v", err)
 			}
-			log.Printf("Created: %v", r.User.Id)
+			log.Printf("Created: %v", r)
 
 			getAll, err := client.GetAll(context.Background(), &pbUser.Request{})
 			if err != nil {
