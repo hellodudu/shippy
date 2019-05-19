@@ -6,12 +6,14 @@ import (
 	pbVesl "github.com/hellodudu/shippy/proto/vessel"
 	"github.com/hellodudu/shippy/vessel-service/handle"
 	"github.com/micro/go-micro"
+	"github.com/micro/go-plugins/broker/grpc"
 )
 
 func main() {
 
 	// new micro service
-	srv := micro.NewService(micro.Name("shippy.service.vessel"))
+	b := grpc.NewBroker()
+	srv := micro.NewService(micro.Name("shippy.service.vessel"), micro.Broker(b))
 	srv.Init()
 
 	h, err := handle.NewVeslSrvHandler(srv)

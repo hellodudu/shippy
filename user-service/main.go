@@ -8,6 +8,7 @@ import (
 	pbUser "github.com/hellodudu/shippy/proto/user"
 	"github.com/hellodudu/shippy/user-service/handle"
 	"github.com/micro/go-micro"
+	"github.com/micro/go-plugins/broker/grpc"
 )
 
 func main() {
@@ -17,8 +18,10 @@ func main() {
 	os.Setenv("DB_HOST", *dbHost)
 
 	// new micro service
+	b := grpc.NewBroker()
 	srv := micro.NewService(
 		micro.Name("shippy.service.user"),
+		micro.Broker(b),
 	)
 	srv.Init()
 

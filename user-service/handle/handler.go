@@ -15,6 +15,7 @@ import (
 type UserSrvHandler struct {
 	r repo.IRepository
 	s micro.Service
+	p micro.Publisher
 }
 
 func NewUserSrvHandler(s micro.Service) (*UserSrvHandler, error) {
@@ -25,6 +26,11 @@ func NewUserSrvHandler(s micro.Service) (*UserSrvHandler, error) {
 	var err error
 	if h.r, err = repo.NewRepository(); err != nil {
 		log.Fatalf("failed to call NewRepository(): %v", err)
+	}
+
+	h.p = micro.NewPublisher("user.create", s.Client())
+	if h.p == nil {
+		log.Fatalf("failed to call NewPublisher")
 	}
 
 	return h, err
@@ -49,9 +55,7 @@ func (h *UserSrvHandler) Create(ctx context.Context, req *pbUser.User, resp *pbU
 		return nil
 	}
 
-	if err := h.publishEvent(req); err != nil {
-		return err
-	}
+	h.p.Publish(ctx, req)
 
 	resp.User = req
 	return nil
@@ -94,7 +98,6 @@ func (h *UserSrvHandler) GetAll(ctx context.Context, req *pbUser.Request, resp *
 	}
 	resp.Users = users
 
-	log.Println("Get All:", users)
 	return nil
 }
 

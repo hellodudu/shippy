@@ -88,13 +88,13 @@ func createUser() {
 
 	service.Init(
 		micro.Action(func(c *cli.Context) {
-			name := "dudu1"
+			name := "dudu4"
 			email := "hellodudu86@gmail.com"
 			password := "123qwe"
 			company := "amazing"
 
 			r, err := client.Create(context.Background(), &pbUser.User{
-				Id:       "1001",
+				Id:       "1004",
 				Name:     name,
 				Email:    email,
 				Password: password,

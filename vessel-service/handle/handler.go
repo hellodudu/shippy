@@ -2,14 +2,13 @@ package handle
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	pbUser "github.com/hellodudu/shippy/proto/user"
 	pbVesl "github.com/hellodudu/shippy/proto/vessel"
 	"github.com/hellodudu/shippy/vessel-service/repo"
 	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/broker"
+	"github.com/micro/go-micro/metadata"
 )
 
 type VeslSrvHandler struct {
@@ -25,24 +24,18 @@ func NewVeslSrvHandler(s micro.Service) (*VeslSrvHandler, error) {
 		log.Fatalf("failed to call NewRepository(): %v", err)
 	}
 
-	h.Broker().Subscribe("user.created", h.subHandle)
+	if err := micro.RegisterSubscriber("user.create", s.Server(), h.Process); err != nil {
+		log.Fatalf("failed to subscrib user.create: %v", err)
+	}
 
 	return h, err
 }
 
-func (v *VeslSrvHandler) subHandle(pub broker.Publication) error {
-	log.Println("sub handle topic:", pub.Topic())
-	log.Println("sub message header:", pub.Message().Header)
-
-	u := &pbUser.User{}
-	json.Unmarshal(pub.Message().Body, u)
-	log.Println("sub message body:", pub.Message().Body)
-	log.Println("sub message json unmarshal:", u)
+func (v *VeslSrvHandler) Process(ctx context.Context, event *pbUser.User) error {
+	md, _ := metadata.FromContext(ctx)
+	log.Printf("[pubsub.1] Received event %+v with metadata %+v\n", event, md)
+	// do something with event
 	return nil
-}
-
-func (v *VeslSrvHandler) Broker() broker.Broker {
-	return v.s.Options().Broker
 }
 
 func (v *VeslSrvHandler) Close() {
